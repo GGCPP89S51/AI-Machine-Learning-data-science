@@ -16,6 +16,7 @@ class Percetron(object):
                 self.w_[1:]+=update*xi
                 self.w_[0]+=update
                 errors += int(update != 0.0)
+            self.errors.append(errors)
         return self
     
     def net_input(self,x):
@@ -57,18 +58,32 @@ plt.legend(loc='upper left')
 plt.title('Perceptron')
 plt.show()
 '''
-from ucimlrepo import fetch_ucirepo 
-  
-# fetch dataset 
-iris = fetch_ucirepo(id=53) 
-  
-# data (as pandas dataframes) 
-X = iris.data.features 
-y = iris.data.targets 
-  
-# metadata 
-print(iris.metadata) 
-  
-# variable information 
-print(iris.variables) 
+import os
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plot
+
+s = os.path.join(r'C:\Users\s0901\OneDrive\文件\GitHub\AI-Machine-Learning-data-science\iris\iris.data')
+print('URL:', s)
+df = pd.read_csv(s, header=None)
+
+print(df.tail())
+
+y = df.iloc[0:100, 4].values
+y = np.where(y == 'Iris-setosa', -1, 1)
+x = df.iloc[0:100, [0, 2]].values
+
+plot.scatter(x[:50, 0], x[:50, 1], color='red', marker='o', label='setosa')
+plot.scatter(x[50:100, 0], x[50:100, 1], color='blue', marker='x', label='versicolor')
+plot.xlabel('sepal length[cm]')
+plot.ylabel('petal length[cm]')
+plot.legend(loc='upper left')
+plot.show()
+
+ppn = Percetron(eta=0.1,n_iter=10)
+ppn.fit(x,y)
+plot.plot(range(1,len(ppn.errors)+1),ppn.errors,marker='o')
+plot.xlabel('Epochs')
+plot.ylabel('Number of updates')
+plot.show()
 
